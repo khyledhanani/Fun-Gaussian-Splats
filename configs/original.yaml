@@ -1,0 +1,12 @@
+run_name: original_debug
+method: original
+seed: 42
+
+data:
+  train_root: ./data/train
+
+trainer:
+  max_steps: 10
+  log_every: 1
+
+

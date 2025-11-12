@@ -1,0 +1,17 @@
+run_name: vq_debug
+method: vq
+seed: 42
+
+data:
+  train_root: ./data/train
+
+vq:
+  codebook_size: 1024
+  embedding_dim: 32
+  commitment_weight: 0.25
+
+trainer:
+  max_steps: 10
+  log_every: 1
+
+

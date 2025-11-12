@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gsplat"
+version = "0.0.1"
+description = "Gaussian Splatting implementations: original and vector-quantized variants"
+readme = "README.md"
+authors = [{ name = "Your Name", email = "you@example.com" }]
+requires-python = ">=3.10"
+dependencies = [
+  # Keep minimal; add torch and other deps as you implement
+  "numpy>=1.24",
+  "pyyaml>=6.0.1",
+  "tqdm>=4.66",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=7.0",
+  "ruff>=0.5.0",
+  "mypy>=1.6.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["gsplat*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+
