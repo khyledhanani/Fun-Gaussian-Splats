@@ -1,12 +1,32 @@
-run_name: original_debug
+run_name: original_fern
 method: original
 seed: 42
+device: cpu  # or "cuda" if available
 
 data:
-  train_root: ./data/train
+  colmap_path: gsplat/datasets/nerf_llff_data/fern/sparse/0
+  images_path: gsplat/datasets/nerf_llff_data/fern/images_4
+  split: train
 
 trainer:
-  max_steps: 10
-  log_every: 1
+  max_steps: 100
+  log_every: 10
+
+# Learning rates (standard 3DGS values)
+lr_means: 0.00016
+lr_rotations: 0.001
+lr_scales: 0.005
+lr_sh_coeffs: 0.0025
+lr_opacities: 0.05
+lr_total: 0.0
+eps: 1e-15
+
+# Gaussian initialization
+gaussian:
+  initial_scale: 0.01
+  sh_degree: 0  # 0 = RGB only, no view-dependence
+
+# Rendering
+background_color: [0.0, 0.0, 0.0]  # Black background
 
 
