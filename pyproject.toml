@@ -14,7 +14,6 @@ dependencies = [
   "numpy>=1.24",  # Still needed for COLMAP reading
   "pyyaml>=6.0.1",
   "tqdm>=4.66",
-  "pillow>=10.0.0", # For PIL
 ]
 
 [project.optional-dependencies]
@@ -22,9 +21,6 @@ dev = [
   "pytest>=7.0",
   "ruff>=0.5.0",
   "mypy>=1.6.0",
-  "ipywidgets", # For notebook interactivity
-  "matplotlib", # For plotting in notebooks
-  "ipykernel",  # For running notebooks
 ]
 
 [tool.setuptools.packages.find]
@@ -34,3 +30,5 @@ include = ["gsplat*"]
 [tool.ruff]
 line-length = 100
 target-version = "py310"
+
+
