@@ -1,7 +1,7 @@
-Gaussian Splatting (Normal + Vector-Quantized)
+Gaussian Splatting (Normal and Vector-Quantized)
 ===========================================================
 
-This repo has my implementation of gaussian splatting along with (work in progress) the vector quantized version. 
+This repo has my implementation of gaussian splatting along with (work in progress) the vector quantized version. This is purely for my learning, experimenting and research
 
 **Workflow**: 
 1. Run COLMAP SfM on input images → get camera poses + sparse point cloud
