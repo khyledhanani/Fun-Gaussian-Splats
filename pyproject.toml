@@ -7,7 +7,6 @@ name = "gsplat"
 version = "0.0.1"
 description = "Gaussian Splatting implementations: original and vector-quantized variants"
 readme = "README.md"
-authors = [{ name = "Your Name", email = "you@example.com" }]
 requires-python = ">=3.10"
 dependencies = [
   "torch>=2.0.0",

@@ -12,32 +12,11 @@ from gsplat.methods.base import GaussianSplatMethod
 from gsplat.utils.dataclasses import GaussianPrimitive, eval_sh_color
 from gsplat.registry import METHOD_REGISTRY
 from gsplat.utils.dataclasses import Camera, Image
-
-
-def quaternion_to_rotation_matrix(q: torch.Tensor) -> torch.Tensor:
-	"""Convert a quaternion to a 3x3 rotation matrix.
-
-	Args:
-		q: Tensor of shape ``(4,)`` containing the quaternion in ``(w, x, y, z)`` order.
-
-	Returns:
-		Tensor of shape ``(3, 3)`` representing the corresponding rotation matrix.
-	"""
-	w, x, y, z = q[0], q[1], q[2], q[3]
-	R = torch.stack([
-		torch.stack([1 - 2*(y*y + z*z), 2*(x*y - w*z), 2*(x*z + w*y)]),
-		torch.stack([2*(x*y + w*z), 1 - 2*(x*x + z*z), 2*(y*z - w*x)]),
-		torch.stack([2*(x*z - w*y), 2*(y*z + w*x), 1 - 2*(x*x + y*y)])
-	])
-	
-	return R
-
-
 @METHOD_REGISTRY.register("original")
 class OriginalGaussianSplat(GaussianSplatMethod, torch.nn.Module):
-	"""Reference 3D Gaussian Splatting method.
+	"""3D Gaussian Splatting method.
 
-	This implementation initializes Gaussian primitives from COLMAP point clouds
+	Initializes Gaussian primitives from COLMAP point clouds
 	and optimizes them via differentiable rasterization, including adaptive
 	density control through splitting, cloning, and pruning.
 
@@ -115,7 +94,8 @@ class OriginalGaussianSplat(GaussianSplatMethod, torch.nn.Module):
 		self.convert_primitives_to_batches()
 
 	def convert_primitives_to_batches(self) -> List[Dict[str, Any]]:
-		"""Convert the primitive list into batched learnable tensors."""
+		"""Convert the primitive list into batched learnable tensors so we can use 
+		autograd."""
 		means = torch.stack([primitive.position for primitive in self.primitives])
 		rotations = torch.stack([primitive.rotation for primitive in self.primitives])
 		scales = torch.stack([primitive.scale for primitive in self.primitives])
@@ -137,7 +117,7 @@ class OriginalGaussianSplat(GaussianSplatMethod, torch.nn.Module):
 			self.scene_extent = torch.norm(maxs - mins).item()
 
 	def setup_optimizer(self) -> None:
-		"""Initialize the optimizer over the Gaussian parameters."""
+		"""Init optimizer"""
 		params = [{'params': [self.means], 'lr': self.config.get("lr_means", 0.001), 'name': 'means'},
 				  {'params': [self.rotations], 'lr': self.config.get("lr_rotations", 0.001), 'name': 'rotations'},
 				  {'params': [self.scales], 'lr': self.config.get("lr_scales", 0.001), 'name': 'scales'},
@@ -318,6 +298,7 @@ class OriginalGaussianSplat(GaussianSplatMethod, torch.nn.Module):
 				self.scene_extent = torch.norm(maxs - mins).item()
 		extent = self.scene_extent
 		
+		# heuristic I used for warm up and cool down
 		if (iter_pct < 0.3 or iter_pct > 0.9) or (iter_pct % 0.1 != 0):
 			return
 
@@ -424,7 +405,6 @@ class OriginalGaussianSplat(GaussianSplatMethod, torch.nn.Module):
 		tile_gaussians: Dict[Tuple[int, int], List[int]] = {}
 
 		for g in range(num_gaussians):
-			# Convert floating candidate box to integer pixel bounds and clamp to image
 			gx_min = int(torch.floor(x_min_f[g]).item())
 			gx_max = int(torch.ceil(x_max_f[g]).item())
 			gy_min = int(torch.floor(y_min_f[g]).item())
@@ -435,11 +415,9 @@ class OriginalGaussianSplat(GaussianSplatMethod, torch.nn.Module):
 			gy_min = max(0, min(height - 1, gy_min))
 			gy_max = max(0, min(height - 1, gy_max))
 
-			# Skip if box collapsed
 			if gx_max < gx_min or gy_max < gy_min:
 				continue
 
-			# Determine tiles overlapped by this bounding box
 			tile_x0 = gx_min // tile_width
 			tile_x1 = gx_max // tile_width
 			tile_y0 = gy_min // tile_height

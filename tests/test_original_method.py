@@ -18,7 +18,8 @@ from pathlib import Path
 # Add project root to path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from gsplat.methods.original.original import OriginalGaussianSplat, quaternion_to_rotation_matrix
+from gsplat.methods.original.original import OriginalGaussianSplat
+from gsplat.utils.dataclasses import quaternion_to_rotation_matrix
 from gsplat.utils.dataclasses import Camera, GaussianPrimitive
 import time
 

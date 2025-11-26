@@ -13,6 +13,10 @@ from gsplat.datasets.colmap import (
 )
 from gsplat.utils.dataclasses import Camera, Image
 
+"""
+dataset loader written by legendary claude sonnet
+"""
+
 
 class ColmapDataset:
 	"""

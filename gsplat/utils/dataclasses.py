@@ -10,6 +10,27 @@ import numpy as np
 import torch
 
 
+def quaternion_to_rotation_matrix(q: torch.Tensor) -> torch.Tensor:
+	"""Convert a quaternion to a 3x3 rotation matrix.
+
+	Args:
+		q: Tensor of shape ``(4,)`` containing the quaternion in ``(w, x, y, z)`` order.
+
+	Returns:
+		Tensor of shape ``(3, 3)`` representing the corresponding rotation matrix.
+	"""
+	w, x, y, z = q[0], q[1], q[2], q[3]
+	R = torch.stack(
+		[
+			torch.stack([1 - 2 * (y * y + z * z), 2 * (x * y - w * z), 2 * (x * z + w * y)]),
+			torch.stack([2 * (x * y + w * z), 1 - 2 * (x * x + z * z), 2 * (y * z - w * x)]),
+			torch.stack([2 * (x * z - w * y), 2 * (y * z + w * x), 1 - 2 * (x * x + y * y)]),
+		]
+	)
+
+	return R
+
+
 def get_sh_degree(num_coeffs: int) -> int:
 	"""Get spherical harmonics degree from number of coefficients per channel."""
 	# Number of coeffs for degree n is (n+1)^2

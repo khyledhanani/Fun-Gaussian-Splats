@@ -60,7 +60,7 @@ def main() -> None:
 	)
 	logger.info(f"Loaded {len(dataset)} images")
 
-	# Build method and initialize with dataset
+	# buildmethod and initialize with dataset
 	method = build_method(config)
 	logger.info("Loading cameras and primitives...")
 	method.load_cameras_from_dataset(dataset)
@@ -68,33 +68,27 @@ def main() -> None:
 	method.setup_optimizer()
 	logger.info("Initialization complete")
 
-	# Setup output directory
 	runs_dir = Path(config.get("runs_dir", "runs")) / config.get("run_name", "debug")
 	runs_dir.mkdir(parents=True, exist_ok=True)
 	(runs_dir / "config.json").write_text(json.dumps(config, indent=2))
 
-	# Training loop
 	max_steps = int(config.get("trainer", {}).get("max_steps", 10))
 	log_every = int(config.get("trainer", {}).get("log_every", 1))
 	
 	logger.info(f"Starting training for {max_steps} steps")
 	
 	for step in range(max_steps):
-		# Randomly sample a camera/image
 		idx = random.randint(0, len(dataset) - 1)
 		sample = dataset[idx]
 		
-		# Load target image
 		target_image = load_image(sample["image_path"], device=method.device)
 		
-		# Create batch
 		batch = {
 			"camera": sample["camera"],
 			"target_image": target_image,
 			"background_color": config.get("background_color", (0.0, 0.0, 0.0)),
 		}
 		
-		# Training step
 		logs = method.train_step(batch)
 		
 		if step % log_every == 0:
