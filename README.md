@@ -1,4 +1,4 @@
-Gaussian Splatting (Original + Vector-Quantized) — Monorepo
+Gaussian Splatting (Normal + Vector-Quantized) — Monorepo
 ===========================================================
 
 This repository is structured to implement the original 3D Gaussian Splatting method first, then add a Vector-Quantized (VQ) variant as a clean extension. It uses a modular package layout, a registry to swap implementations, and YAML configs to ensure experiment reproducibility.
